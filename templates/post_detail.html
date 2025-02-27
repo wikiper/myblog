@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title>{{ post.title }}</title>
+</head>
+<body>
+    <h1>{{ post.title }}</h1>
+    <p>{{ post.content|safe }}</p>
+    <p>Published on: {{ post.created_at }}</p>
+    <a href="{% url 'post_list' %}">Back to Home</a>
+    
+    <p>{{ post.likes.count }} Likes</p>
+    <form method="post" action="{% url 'like_post' post.id %}">
+        {% csrf_token %}
+        <button type="submit">Like</button>
+    </form>
+    
+    <p>Share this post:</p>
+    <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.title }}" target="_blank">Twitter</a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank">Facebook</a>
+    <a href="https://www.linkedin.com/shareArticle?url={{ request.build_absolute_uri }}&title={{ post.title }}" target="_blank">LinkedIn</a>
+
+    <h2>Comments</h2>
+    {% for comment in comments %}
+        <p><strong>{{ comment.author }}</strong> - {{ comment.created_at }}</p>
+        <p>{{ comment.content }}</p>
+        <hr>
+    {% empty %}
+        <p>No comments yet.</p>
+    {% endfor %}
+
+    <h2>Add a Comment</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="author">Your Name:</label>
+        <input type="text" id="author" name="author" required>
+        <br>
+        <label for="content">Your Comment:</label>
+        <textarea id="content" name="content" required></textarea>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
